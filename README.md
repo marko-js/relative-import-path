@@ -29,6 +29,8 @@
 Like path.relative, but for generating short require'able paths.
 
 - Removes unnecessary `node_modules` from resolved relative paths.
+- Keeps directories which cannot be a package name (eg pnpm's `.pnpm` virtual store)
+  as a relative path, since they hold no importable module.
 - Automatically converts windows style paths to POSIX.
 
 # Installation
@@ -64,6 +66,8 @@ relativeImportPath("/a/b/c", "/b/node_modules/b"); // /b/node_modules/b
 relativeImportPath("/a/a", "/a/b/node_modules/b"); // ./b/node_modules/b
 relativeImportPath("/a/node_modules/@a/a/a", "/a/node_modules/@a/b/a"); // @a/b/a
 relativeImportPath("/a/node_modules/@a/a/a", "/a/node_modules/@a/a/b"); // ./b
+relativeImportPath("/a/a", "/a/node_modules/b/node_modules/c/a"); // b/node_modules/c/a
+relativeImportPath("/a/a", "/a/node_modules/.pnpm/b@1.0.0/node_modules/b/a"); // ./node_modules/.pnpm/b@1.0.0/node_modules/b/a
 ```
 
 # Code of Conduct

@@ -72,7 +72,18 @@ export function relativeImportPath(from: string, to: string): string {
 }
 
 function hasNms(src: string, pos: number) {
-  return src.slice(pos).startsWith(nms);
+  if (!src.slice(pos).startsWith(nms)) return false;
+
+  switch (src[pos + nmsLen]) {
+    // npm forbids a package name from starting with any of these, so such a directory
+    // holds no importable module, eg pnpm's `.pnpm` virtual store.
+    case ".":
+    case "-":
+    case "_":
+      return false;
+    default:
+      return true;
+  }
 }
 
 function stripNms(src: string, pos: number) {
